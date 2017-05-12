@@ -75,5 +75,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MW.Budgeting.Common\MW.Budgeting.Common.csproj">
+      <Project>{9da8afb3-e5fb-4517-8220-7c94492eee85}</Project>
+      <Name>MW.Budgeting.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MW.Budgeting.Model\MW.Budgeting.Model.csproj">
+      <Project>{4bcd26a4-ea10-42e5-a662-7caa07797371}</Project>
+      <Name>MW.Budgeting.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
