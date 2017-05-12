@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Common
 {
-    public class Class1
+    public static class Global
     {
+        
     }
 }

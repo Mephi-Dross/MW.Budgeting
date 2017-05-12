@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MW.Budgeting.UI.Main;
 
-namespace MW.Budgeting.UI
+namespace MW.Budgeting.UI.Accounts
 {
-    public partial class Form1 : Form
+    public partial class AccountScreen : UserControl
     {
-        public Form1()
+        public AccountScreen()
         {
             InitializeComponent();
         }
+
+        public MainForm MainForm { get; set; }
     }
 }

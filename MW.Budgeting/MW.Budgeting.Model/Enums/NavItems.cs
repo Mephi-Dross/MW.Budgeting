@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MW.Budgeting.Model
+namespace MW.Budgeting.Model.Enums
 {
-    public class Class1
+    public enum NavItems
     {
+        Budget,
+        Accounts
     }
 }
