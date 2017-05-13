@@ -1,9 +1,8 @@
-﻿using MW.Budgeting.Model.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 /*  A replacement for the YNAB4 windows application, should it ever be retired.
  *  See License.txt for the full license.
@@ -23,21 +22,19 @@ using System.Threading.Tasks;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace MW.Budgeting.Model.Accounts
+namespace MW.Budgeting
 {
-    public class Account
+    static class Program
     {
-        public Account()
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
         {
-            ID = new Guid();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MW.Budgeting.UI.Main.MainForm());
         }
-
-        public Guid ID { get; set; }
-        public string Name { get; set; }
-        public string Note { get; set; }
-        public bool IsOffBudget { get; set; }
-        public bool IsActive { get; set; }
-        public List<Entry> Entries { get; set; }
-        public AccountType Type { get; set; }
-    } 
+    }
 }

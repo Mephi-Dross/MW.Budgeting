@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3029AAB9-BE92-4CB2-AA4F-EA285F47886A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>MW.Budgeting.UI</RootNamespace>
-    <AssemblyName>MW.Budgeting.UI</AssemblyName>
+    <ProjectGuid>{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MW.Budgeting</RootNamespace>
+    <AssemblyName>MW.Budgeting</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,9 +31,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,43 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Accounts\AccountScreen.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Accounts\AccountScreen.Designer.cs">
-      <DependentUpon>AccountScreen.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Budget\BudgetScreen.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Budget\BudgetScreen.Designer.cs">
-      <DependentUpon>BudgetScreen.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Main\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Main\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Main\NavBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Main\NavBar.Designer.cs">
-      <DependentUpon>NavBar.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Accounts\AccountScreen.resx">
-      <DependentUpon>AccountScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Budget\BudgetScreen.resx">
-      <DependentUpon>BudgetScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main\NavBar.resx">
-      <DependentUpon>NavBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -105,17 +67,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MW.Budgeting.Common\MW.Budgeting.Common.csproj">
-      <Project>{9da8afb3-e5fb-4517-8220-7c94492eee85}</Project>
-      <Name>MW.Budgeting.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MW.Budgeting.Model\MW.Budgeting.Model.csproj">
-      <Project>{4bcd26a4-ea10-42e5-a662-7caa07797371}</Project>
-      <Name>MW.Budgeting.Model</Name>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MW.Budgeting.UI\MW.Budgeting.UI.csproj">
+      <Project>{3029aab9-be92-4cb2-aa4f-ea285f47886a}</Project>
+      <Name>MW.Budgeting.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dialogs\" />
+    <Content Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

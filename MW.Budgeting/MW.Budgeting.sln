@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MW.Budgeting.Model", "MW.Bu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MW.Budgeting.Common", "MW.Budgeting.Common\MW.Budgeting.Common.csproj", "{9DA8AFB3-E5FB-4517-8220-7C94492EEE85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MW.Budgeting", "MW.Budgeting\MW.Budgeting.csproj", "{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9DA8AFB3-E5FB-4517-8220-7C94492EEE85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DA8AFB3-E5FB-4517-8220-7C94492EEE85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DA8AFB3-E5FB-4517-8220-7C94492EEE85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FB2449E-C5F3-4543-B75A-CE318FCB93EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

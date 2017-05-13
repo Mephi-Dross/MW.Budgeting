@@ -62,6 +62,7 @@
     <Compile Include="Accounts\Category.cs" />
     <Compile Include="Accounts\Entry.cs" />
     <Compile Include="Accounts\Payee.cs" />
+    <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\NavItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
