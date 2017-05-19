@@ -1,4 +1,5 @@
 ﻿using MW.Budgeting.Common.Helper;
+using MW.Budgeting.Model.Accounts;
 using MW.Budgeting.Model.Enums;
 using MW.Budgeting.UI.Accounts;
 using MW.Budgeting.UI.Budget;
@@ -64,8 +65,18 @@ namespace MW.Budgeting.UI.Main
             this.MainSplitter.Panel2.Controls.Add(this.AccountScreen);
 
             // Creating Database
-            if (!File.Exists("MW_TEST.db"))
-                SQLHelper.CreateDB("TEST");
+            if (!Directory.Exists(".\\Data"))
+                Directory.CreateDirectory(".\\Data");
+
+            if (!File.Exists(".\\Data\\MW_TEST.db"))
+                SQLHelper.CreateDB("MW_TEST");
+
+            string filePath = System.Windows.Forms.Application.StartupPath + "\\Data\\MW_Test.db";
+            SQLHelper.Initialize(filePath);
+            if (!SQLHelper.TestConnection())
+                MessageBox.Show("ERROR DURING CONNECTION!");
+
+            var Entry = new Entry();
         }
 
         public void SwitchContent(NavItems? item)

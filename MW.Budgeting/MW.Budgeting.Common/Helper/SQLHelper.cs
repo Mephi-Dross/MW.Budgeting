@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MW.Budgeting.Common.SQL;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -27,29 +29,107 @@ namespace MW.Budgeting.Common.Helper
 {
     public static class SQLHelper
     {
-        public static void Initialize()
+        private static string connectionString = "Data Source=[PATH];Version=3;";
+        private static SQLiteConnection Connection;
+
+        public static void Initialize(string filePath)
         {
-            
+            connectionString = connectionString.Replace("[PATH]", filePath);
+            Connection = new SQLiteConnection(connectionString);
         }
 
         public static void CreateDB(string name)
         {
-            SQLiteConnection.CreateFile(string.Format("MW_{0}.db", name));
+            SQLiteConnection.CreateFile(string.Format(".\\Data\\{0}.db", name));
+
+            connectionString = connectionString.Replace("[PATH]", string.Format(".\\Data\\{0}.db", name));
+            SQLiteConnection con = new SQLiteConnection(connectionString);
+            SQLiteCommand cmd;
+            try
+            {
+                con.Open();
+                cmd = new SQLiteCommand(SQLScripts.CREATE_CATEGORY_TABLE, con);
+                cmd.ExecuteNonQuery();
+                cmd = new SQLiteCommand(SQLScripts.CREATE_PAYEE_TABLE, con);
+                cmd.ExecuteNonQuery();
+                cmd = new SQLiteCommand(SQLScripts.CREATE_ENTRY_TABLE, con);
+                cmd.ExecuteNonQuery();
+                cmd = new SQLiteCommand(SQLScripts.CREATE_ACCOUNT_TABLE, con);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add Logging
+            }
+            finally
+            {
+                con.Close();
+            }
+
+
+
         }
 
-        public static void Connect()
+        public static bool TestConnection()
         {
-
+            string SQL = @"SELECT * FROM Entry";
+            if (ExecuteNonQuery(SQL) == 0)
+                return false;
+            else
+                return true;
         }
 
-        public static void Disconnect()
+        /// <summary>
+        /// Executes the given command and returns -1 in case of error
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        public static int ExecuteNonQuery(string sql)
         {
+            int value = 0;
+            SQLiteCommand cmd = new SQLiteCommand(sql, Connection);
+            try
+            {
+                Connection.Open();
+                value = cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add logging
+            }
+            finally
+            {
+                Connection.Close();
+            }
 
+            return value;
         }
 
-        public static void ExecuteCommand()
+        public static List<NameValueCollection> ExecuteReader(string sql)
         {
+            SQLiteDataReader reader;
+            SQLiteCommand cmd = new SQLiteCommand(sql, Connection);
+            List<NameValueCollection> rows = new List<NameValueCollection>();
+            try
+            {
+                Connection.Open();
+                reader = cmd.ExecuteReader();
 
+                while (reader.Read())
+                {
+                    rows.Add(reader.GetValues());
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add logging
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+            return rows;
         }
     }
 }
