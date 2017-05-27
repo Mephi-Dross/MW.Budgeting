@@ -50,6 +50,10 @@ namespace MW.Budgeting.UI.Main
 
         public void Init()
         {
+            // Fixing Panel sizes
+            this.MainSplitter.Panel2.AutoSize = true;
+            this.MainSplitter.Panel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
             // Initializing
             this.AccountScreen = new AccountScreen();
             this.BudgetScreen = new BudgetScreen();
@@ -63,20 +67,6 @@ namespace MW.Budgeting.UI.Main
             // Creating the standard screen you see when you open the program. NavBar left, Accounts right.
             this.MainSplitter.Panel1.Controls.Add(this.NavBar);
             this.MainSplitter.Panel2.Controls.Add(this.AccountScreen);
-
-            // Creating Database
-            if (!Directory.Exists(".\\Data"))
-                Directory.CreateDirectory(".\\Data");
-
-            if (!File.Exists(".\\Data\\MW_TEST.db"))
-                SQLHelper.CreateDB("MW_TEST");
-
-            string filePath = System.Windows.Forms.Application.StartupPath + "\\Data\\MW_Test.db";
-            SQLHelper.Initialize(filePath);
-            if (!SQLHelper.TestConnection())
-                MessageBox.Show("ERROR DURING CONNECTION!");
-
-            var Entry = new Entry();
         }
 
         public void SwitchContent(NavItems? item)

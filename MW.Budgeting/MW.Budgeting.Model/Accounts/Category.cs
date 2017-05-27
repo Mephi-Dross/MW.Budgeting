@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MW.Budgeting.Model.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Category
+    public class Category : IDBObject
     {
         public Category()
         {
@@ -36,5 +37,24 @@ namespace MW.Budgeting.Model.Accounts
         public bool IsMasterCategory { get; set; }
         public Category Parent { get; set; }
         public List<Category> Childs { get; set; }
+
+        #region IDBObject-Functions
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

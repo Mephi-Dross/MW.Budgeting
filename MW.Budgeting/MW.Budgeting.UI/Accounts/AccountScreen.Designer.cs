@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgEntries = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgEntries)).BeginInit();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.dataGridView1);
+            this.flowLayoutPanel1.Controls.Add(this.dgEntries);
             this.flowLayoutPanel1.Controls.Add(this.label1);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
@@ -46,14 +46,14 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(689, 549);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // dataGridView1
+            // dgEntries
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(66, 150);
-            this.dataGridView1.TabIndex = 0;
+            this.dgEntries.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgEntries.Dock = System.Windows.Forms.DockStyle.Top;
+            this.dgEntries.Location = new System.Drawing.Point(3, 3);
+            this.dgEntries.Name = "dgEntries";
+            this.dgEntries.Size = new System.Drawing.Size(66, 150);
+            this.dgEntries.TabIndex = 0;
             // 
             // label1
             // 
@@ -73,7 +73,7 @@
             this.Size = new System.Drawing.Size(689, 549);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgEntries)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -81,7 +81,7 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgEntries;
         private System.Windows.Forms.Label label1;
     }
 }

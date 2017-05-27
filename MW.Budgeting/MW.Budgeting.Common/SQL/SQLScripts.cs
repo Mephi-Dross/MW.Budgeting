@@ -26,14 +26,18 @@ namespace MW.Budgeting.Common.SQL
 {
     public static class SQLScripts
     {
+        #region Table Creation
+
         public const string CREATE_ENTRY_TABLE =
             @"CREATE TABLE Entry (
-                ID varchar(32) NOT NULL,
+                ID VARCHAR(32) PRIMARY KEY  NOT NULL  UNIQUE , 
                 Date DateTime,
                 Outflow decimal,
                 Inflow decimal,
                 IsDone bool,
-                PRIMARY KEY (ID)
+                Account VARCHAR(32),
+                Payee VARCHAR(32),
+                Category VARCHAR(32)
             );";
 
         public const string CREATE_CATEGORY_TABLE =
@@ -44,8 +48,71 @@ namespace MW.Budgeting.Common.SQL
                 ParentCategory VARCHAR(32)
             )";
 
-        public const string CREATE_PAYEE_TABLE = @"CREATE TABLE Payee (ID VARCHAR(32) PRIMARY KEY  NOT NULL  UNIQUE , Name VARCHAR(255), IsActive BOOL, Entry VARCHAR(32))";
+        public const string CREATE_PAYEE_TABLE = 
+            @"CREATE TABLE Payee (
+                ID VARCHAR(32) PRIMARY KEY  NOT NULL  UNIQUE , 
+                Name VARCHAR(255), 
+                IsActive BOOL
+            )";
 
-        public const string CREATE_ACCOUNT_TABLE = @"CREATE TABLE Account (ID VARCHAR(32) PRIMARY KEY  NOT NULL  UNIQUE , Name VARCHAR(255), Note VARCHAR(255), IsOffBudget BOOL, IsActive BOOL, Entry VARCHAR(32), Type VARCHAR(255))";
+        public const string CREATE_ACCOUNT_TABLE = 
+            @"CREATE TABLE Account (
+                ID VARCHAR(32) PRIMARY KEY  NOT NULL  UNIQUE , 
+                Name VARCHAR(255), 
+                Note VARCHAR(255), 
+                IsOffBudget BOOL, 
+                IsActive BOOL, 
+                Type VARCHAR(255)
+            )";
+
+        #endregion
+
+        #region GET-Scripts
+
+        public const string GET_SELECTED_ACCOUNT =
+            @"SELECT *
+              FROM Account
+              WHERE Name = '[NAME]'
+              LIMIT 1;
+             ";
+
+        public const string GET_ENTRIES_FROM_ACCOUNT =
+            @"SELECT *
+              FROM Entry
+              WHERE Account = [ACCOUNT]";
+
+        #endregion
+
+        #region Insert-Scripts
+
+        public const string INSERT_ACCOUNT =
+            @"INSERT INTO Account (ID, Name, Note, IsOffBudget, IsActive, Type)
+                VALUES (
+                    '[ID]',
+                    '[NAME]',
+                    '[NOTE]',
+                    '[ISOFFBUDGET]',
+                    '[ISACTIVE]',
+                    '[TYPE]'
+                )";
+
+        public const string INSERT_ENTRY =
+            @"INSERT INTO Entry (ID, Date, Outflow, Inflow, IsDone, Account, Payee, Category)
+                VALUES (
+                    '[ID]',
+                    '[DATE]',
+                    '[OUTFLOW]',
+                    '[INFLOW]',
+                    '[ISDONE]',
+                    '[ACCOUNT]',
+                    '[PAYEE]',
+                    '[CATEGORY]'
+                )";
+
+        #endregion
+
+        #region Update-Scripts
+
+        #endregion
     }
 }

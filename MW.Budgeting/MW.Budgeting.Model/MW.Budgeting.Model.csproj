@@ -64,6 +64,8 @@
     <Compile Include="Accounts\Payee.cs" />
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\NavItems.cs" />
+    <Compile Include="Helper\ConversionHelper.cs" />
+    <Compile Include="Interfaces\IDBObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

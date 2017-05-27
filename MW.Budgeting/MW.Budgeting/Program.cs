@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MW.Budgeting.Common.Helper;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -34,6 +36,19 @@ namespace MW.Budgeting
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Creating Database
+            if (!Directory.Exists(".\\Data"))
+                Directory.CreateDirectory(".\\Data");
+
+            if (!File.Exists(".\\Data\\MW_TEST.db"))
+                SQLHelper.CreateDB("MW_TEST");
+
+            string filePath = System.Windows.Forms.Application.StartupPath + "\\Data\\MW_Test.db";
+            SQLHelper.Initialize(filePath);
+            if (!SQLHelper.TestConnection())
+                MessageBox.Show("ERROR DURING CONNECTION!");
+
             Application.Run(new MW.Budgeting.UI.Main.MainForm());
         }
     }

@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MW.Budgeting.UI.Main;
+using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.Accounts;
 
 /*  A replacement for the YNAB4 windows application, should it ever be retired.
  *  See License.txt for the full license.
@@ -34,8 +36,34 @@ namespace MW.Budgeting.UI.Accounts
         public AccountScreen()
         {
             InitializeComponent();
+            this.Dock = DockStyle.Fill;
+
+            Entries = new List<Entry>();
+
+            this.dgEntries.DataSource = Entries;
+
+            CreateAccount("TEST");
+            ChangeAccount("TEST");
         }
 
         public MainForm MainForm { get; set; }
+        public List<Entry> Entries { get; set; }
+
+        public void ChangeAccount(string accountName)
+        {
+            Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
+        }
+
+        public void CreateAccount(string accountName)
+        {
+            Model.Accounts.Account acc = new Model.Accounts.Account();
+            acc.Name = accountName;
+            acc.IsActive = true;
+            acc.IsOffBudget = false;
+            acc.Note = "Testnote";
+            acc.Type = Model.Enums.AccountType.Cash;
+
+            acc.Save();
+        }
     }
 }

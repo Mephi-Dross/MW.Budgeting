@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
+using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -60,14 +62,12 @@ namespace MW.Budgeting.Common.Helper
             catch (Exception ex)
             {
                 //TODO: Add Logging
+                System.Diagnostics.Debug.Write(ex.Message);
             }
             finally
             {
                 con.Close();
             }
-
-
-
         }
 
         public static bool TestConnection()
@@ -95,7 +95,8 @@ namespace MW.Budgeting.Common.Helper
             }
             catch (Exception ex)
             {
-                //TODO: Add logging
+                //TODO: Add proper logging
+                System.Diagnostics.Debug.Write(ex.Message);
             }
             finally
             {
@@ -123,6 +124,7 @@ namespace MW.Budgeting.Common.Helper
             catch (Exception ex)
             {
                 //TODO: Add logging
+                System.Diagnostics.Debug.Write(ex.Message);
             }
             finally
             {
@@ -130,6 +132,35 @@ namespace MW.Budgeting.Common.Helper
             }
 
             return rows;
+        }
+
+        public static DataSet ExecuteDataSet(string sql, params string[] tableNames)
+        {
+            SQLiteCommand cmd = new SQLiteCommand(sql, Connection);
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd);
+
+            DataSet ds = new DataSet();
+            try
+            {
+                Connection.Open();
+                adapter.Fill(ds);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add logging
+                System.Diagnostics.Debug.Write(ex.Message);
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+            for (int i = 0; i < tableNames.Length; i++)
+            {
+                ds.Tables[i].TableName = tableNames[i];
+            }
+
+            return ds;
         }
     }
 }

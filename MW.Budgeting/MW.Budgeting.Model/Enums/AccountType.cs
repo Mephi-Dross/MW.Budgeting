@@ -26,6 +26,7 @@ namespace MW.Budgeting.Model.Enums
 {
     public enum AccountType
     {
+        None,
         Checking,
         Cash,
         Saving,

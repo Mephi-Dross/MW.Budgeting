@@ -1,6 +1,11 @@
-﻿using MW.Budgeting.Model.Enums;
+﻿using MW.Budgeting.Common.Helper;
+using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.Enums;
+using MW.Budgeting.Model.Helper;
+using MW.Budgeting.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,11 +30,16 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Account
+    public class Account : IDBObject
     {
         public Account()
         {
-            ID = new Guid();
+            ID = Guid.NewGuid();
+        }
+
+        public Account(string name)
+        {
+            Load(name);
         }
 
         public Guid ID { get; set; }
@@ -39,5 +49,50 @@ namespace MW.Budgeting.Model.Accounts
         public bool IsActive { get; set; }
         public List<Entry> Entries { get; set; }
         public AccountType Type { get; set; }
+
+        public void LoadEntries()
+        {
+
+        }
+
+        #region IDBObject-Functions
+
+        public void Save()
+        {
+            string sql = SQLScripts.INSERT_ACCOUNT;
+            sql = sql.Replace("[ID]", this.ID.ToString());
+            sql = sql.Replace("[NAME]", this.Name);
+            sql = sql.Replace("[NOTE]", this.Note);
+            sql = sql.Replace("[ISOFFBUDGET]", this.IsOffBudget.ToString());
+            sql = sql.Replace("[ISACTIVE]", this.IsActive.ToString());
+            sql = sql.Replace("[TYPE]", this.Type.ToString());
+            SQLHelper.ExecuteNonQuery(sql);
+        }
+
+        public void Load(string name)
+        {
+            string sql = SQLScripts.GET_SELECTED_ACCOUNT;
+            sql = sql.Replace("[NAME]", name);
+            DataSet ds = SQLHelper.ExecuteDataSet(sql, "Account");
+            Account acc = ConversionHelper.Convert<Account>(ds).FirstOrDefault();
+            
+            if (acc != null)
+            {
+                this.ID = acc.ID;
+                this.Name = acc.Name;
+                this.Note = acc.Note;
+                this.IsOffBudget = acc.IsOffBudget;
+                this.IsActive = acc.IsActive;
+                this.Type = acc.Type;
+                this.LoadEntries();
+            }
+        }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     } 
 }

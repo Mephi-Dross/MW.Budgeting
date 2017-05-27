@@ -89,6 +89,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MW.Budgeting.Common\MW.Budgeting.Common.csproj">
+      <Project>{9da8afb3-e5fb-4517-8220-7c94492eee85}</Project>
+      <Name>MW.Budgeting.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MW.Budgeting.Model\MW.Budgeting.Model.csproj">
+      <Project>{4bcd26a4-ea10-42e5-a662-7caa07797371}</Project>
+      <Name>MW.Budgeting.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MW.Budgeting.UI\MW.Budgeting.UI.csproj">
       <Project>{3029aab9-be92-4cb2-aa4f-ea285f47886a}</Project>
       <Name>MW.Budgeting.UI</Name>

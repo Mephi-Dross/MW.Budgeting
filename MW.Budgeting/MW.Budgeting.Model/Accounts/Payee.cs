@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MW.Budgeting.Model.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Payee
+    public class Payee : IDBObject
     {
         public Payee()
         {
@@ -35,5 +36,24 @@ namespace MW.Budgeting.Model.Accounts
         public string Name { get; set; }
         public List<Entry> Entries { get; set; }
         public bool IsActive { get; set; }
+
+        #region IDBObject-Functions
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Load(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }
