@@ -81,6 +81,11 @@ namespace MW.Budgeting.Common.SQL
               FROM Entry
               WHERE Account = [ACCOUNT]";
 
+        public const string GET_ACTIVE_PAYEES =
+            @"SELECT *
+              FROM Payee
+              WHERE IsActive = 'True'";
+
         #endregion
 
         #region Insert-Scripts
@@ -107,6 +112,14 @@ namespace MW.Budgeting.Common.SQL
                     '[ACCOUNT]',
                     '[PAYEE]',
                     '[CATEGORY]'
+                )";
+
+        public const string INSERT_PAYEE =
+            @"INSERT INTO Payee (ID, Name, IsActive)
+                VALUES (
+                    '[ID]',
+                    '[Name]',
+                    '[IsActive]'
                 )";
 
         #endregion

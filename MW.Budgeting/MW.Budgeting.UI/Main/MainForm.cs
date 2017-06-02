@@ -51,8 +51,8 @@ namespace MW.Budgeting.UI.Main
         public void Init()
         {
             // Fixing Panel sizes
-            this.MainSplitter.Panel2.AutoSize = true;
-            this.MainSplitter.Panel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //this.MainSplitter.Panel2.AutoSize = true;
+            //this.MainSplitter.Panel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             // Initializing
             this.AccountScreen = new AccountScreen();

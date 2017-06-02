@@ -38,9 +38,9 @@
             this.MainSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainSplitter.Location = new System.Drawing.Point(0, 0);
             this.MainSplitter.Name = "MainSplitter";
-            this.MainSplitter.Panel1MinSize = 50;
+            this.MainSplitter.Panel1MinSize = 100;
             this.MainSplitter.Size = new System.Drawing.Size(784, 561);
-            this.MainSplitter.SplitterDistance = 261;
+            this.MainSplitter.SplitterDistance = 100;
             this.MainSplitter.TabIndex = 0;
             // 
             // MainForm

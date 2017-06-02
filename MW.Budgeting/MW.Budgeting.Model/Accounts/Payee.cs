@@ -1,4 +1,6 @@
-﻿using MW.Budgeting.Model.Interfaces;
+﻿using MW.Budgeting.Common.Helper;
+using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +43,7 @@ namespace MW.Budgeting.Model.Accounts
 
         public void Delete()
         {
-            throw new NotImplementedException();
+
         }
 
         public void Load(string id)
@@ -51,7 +53,11 @@ namespace MW.Budgeting.Model.Accounts
 
         public void Save()
         {
-            throw new NotImplementedException();
+            string sql = SQLScripts.INSERT_PAYEE;
+            sql = sql.Replace("[ID]", this.ID.ToString());
+            sql = sql.Replace("[Name]", this.Name.ToString());
+            sql = sql.Replace("[IsActive]", this.IsActive.ToString());
+            SQLHelper.ExecuteNonQuery(sql);
         }
 
         #endregion

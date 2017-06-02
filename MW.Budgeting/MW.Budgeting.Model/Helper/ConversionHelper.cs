@@ -14,9 +14,9 @@ namespace MW.Budgeting.Model.Helper
     /// </summary>
     public static class ConversionHelper
     {
-        public static List<T> Convert<T>(DataSet ds)
+        public static List<object> Convert<T>(DataSet ds)
         {
-            List<T> items = new List<T>();
+            List<object> items = new List<object>();
 
             try
             {
@@ -33,6 +33,8 @@ namespace MW.Budgeting.Model.Helper
                         Enums.AccountType type = Enums.AccountType.None;
                         Enum.TryParse<Enums.AccountType>(row["Type"].ToString(), out type);
                         acc.Type = type;
+
+                        items.Add(acc);
                     }
                 }
                 else if (typeof(T).FullName == typeof(Category).FullName)
@@ -45,7 +47,15 @@ namespace MW.Budgeting.Model.Helper
                 }
                 else if (typeof(T).FullName == typeof(Payee).FullName)
                 {
+                    foreach (DataRow row in ds.Tables["Payee"].Rows)
+                    {
+                        Payee payee = new Payee();
+                        payee.ID = Guid.Parse(row["ID"].ToString());
+                        payee.Name = row["Name"].ToString();
+                        payee.IsActive = bool.Parse(row["IsActive"].ToString());
 
+                        items.Add(payee);
+                    }
                 }
             }
             catch (Exception ex)

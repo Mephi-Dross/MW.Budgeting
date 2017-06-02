@@ -74,7 +74,7 @@ namespace MW.Budgeting.Model.Accounts
             string sql = SQLScripts.GET_SELECTED_ACCOUNT;
             sql = sql.Replace("[NAME]", name);
             DataSet ds = SQLHelper.ExecuteDataSet(sql, "Account");
-            Account acc = ConversionHelper.Convert<Account>(ds).FirstOrDefault();
+            Account acc = ConversionHelper.Convert<Account>(ds).Cast<Account>().FirstOrDefault();
             
             if (acc != null)
             {

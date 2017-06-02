@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using MW.Budgeting.UI.Main;
 using MW.Budgeting.Common.SQL;
 using MW.Budgeting.Model.Accounts;
+using MW.Budgeting.UI.Controls.Grids;
+using MW.Budgeting.Common.Helper;
+using MW.Budgeting.Model.Helper;
 
 /*  A replacement for the YNAB4 windows application, should it ever be retired.
  *  See License.txt for the full license.
@@ -35,19 +38,44 @@ namespace MW.Budgeting.UI.Accounts
     {
         public AccountScreen()
         {
+            //CreateAccount("TEST");
+            ChangeAccount("TEST");
+            //CreatePayees();
+
+
             InitializeComponent();
             this.Dock = DockStyle.Fill;
-
-            Entries = new List<Entry>();
-
+            Entries = new BindingList<Entry>();
             this.dgEntries.DataSource = Entries;
 
-            CreateAccount("TEST");
-            ChangeAccount("TEST");
+            // Rebind the grids cell editors to more useful items
+            this.dgEntries.Columns["ID"].Visible = false;
+            this.dgEntries.Columns["Account"].Visible = false;
+
+            this.dgEntries.Columns["Date"].CellTemplate = new DateCell();
+
+            // TODO: Show these two columns as ComboBoxes with all the required values
+            this.dgEntries.Columns["Payee"].CellTemplate = new ComboCell<Payee>();
+            this.dgEntries.Columns["Category"].CellTemplate = new ComboCell<Category>();
+
+            this.dgEntries.EditingControlShowing += DgEntries_EditingControlShowing;
+        }
+
+        private void DgEntries_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is ComboEditor<Payee>)
+            {
+                ComboEditor<Payee> editor = e.Control as ComboEditor<Payee>;
+                foreach (Payee payee in GetPayees())
+                {
+                    editor.AddValue(payee);
+                }
+            }
         }
 
         public MainForm MainForm { get; set; }
-        public List<Entry> Entries { get; set; }
+        public BindingList<Entry> Entries { get; set; }
+
 
         public void ChangeAccount(string accountName)
         {
@@ -64,6 +92,26 @@ namespace MW.Budgeting.UI.Accounts
             acc.Type = Model.Enums.AccountType.Cash;
 
             acc.Save();
+        }
+
+        private void CreatePayees()
+        {
+            Payee p1 = new Payee() { IsActive = true, Name = "P1" };
+            Payee p2 = new Payee() { IsActive = false, Name = "P2" };
+            Payee p3 = new Payee() { IsActive = true, Name = "P3" };
+            Payee p4 = new Payee() { IsActive = true, Name = "P4" };
+
+            p1.Save();
+            p2.Save();
+            p3.Save();
+            p4.Save();
+        }
+
+        private List<Payee> GetPayees()
+        {
+            DataSet ds = SQLHelper.ExecuteDataSet(SQLScripts.GET_ACTIVE_PAYEES, "Payee");
+            List<Payee> payees = ConversionHelper.Convert<Payee>(ds).Cast<Payee>().ToList();
+            return payees;
         }
     }
 }
