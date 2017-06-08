@@ -60,7 +60,6 @@
     <Compile Include="Budget\BudgetScreen.Designer.cs">
       <DependentUpon>BudgetScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Grids\ComboColumn.cs" />
     <Compile Include="Controls\Grids\DateColumn.cs" />
     <Compile Include="Main\MainForm.cs">
       <SubType>Form</SubType>

@@ -46,35 +46,105 @@ namespace MW.Budgeting.UI.Accounts
             InitializeComponent();
             this.Dock = DockStyle.Fill;
             Entries = new BindingList<Entry>();
+
+            this.dgEntries.AutoGenerateColumns = false;
             this.dgEntries.DataSource = Entries;
 
-            // Rebind the grids cell editors to more useful items
-            this.dgEntries.Columns["ID"].Visible = false;
-            this.dgEntries.Columns["Account"].Visible = false;
+            // Create the grid columns manually
+            CreateGridColumns();
 
-            this.dgEntries.Columns["Date"].CellTemplate = new DateCell();
 
-            // TODO: Show these two columns as ComboBoxes with all the required values
-            this.dgEntries.Columns["Payee"].CellTemplate = new ComboCell<Payee>();
-            this.dgEntries.Columns["Category"].CellTemplate = new ComboCell<Category>();
 
-            this.dgEntries.EditingControlShowing += DgEntries_EditingControlShowing;
+            this.dgEntries.DataError += DgEntries_DataError;
         }
 
-        private void DgEntries_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void DgEntries_DataError(object sender, DataGridViewDataErrorEventArgs anError)
         {
-            if (e.Control is ComboEditor<Payee>)
+
+            MessageBox.Show("Error happened " + anError.Context.ToString());
+
+            if (anError.Context == DataGridViewDataErrorContexts.Commit)
             {
-                ComboEditor<Payee> editor = e.Control as ComboEditor<Payee>;
-                foreach (Payee payee in GetPayees())
-                {
-                    editor.AddValue(payee);
-                }
+                MessageBox.Show("Commit error");
+            }
+            if (anError.Context == DataGridViewDataErrorContexts.CurrentCellChange)
+            {
+                MessageBox.Show("Cell change");
+            }
+            if (anError.Context == DataGridViewDataErrorContexts.Parsing)
+            {
+                MessageBox.Show("parsing error");
+            }
+            if (anError.Context == DataGridViewDataErrorContexts.LeaveControl)
+            {
+                MessageBox.Show("leave control error");
+            }
+
+            if ((anError.Exception) is ConstraintException)
+            {
+                DataGridView view = (DataGridView)sender;
+                view.Rows[anError.RowIndex].ErrorText = "an error";
+                view.Rows[anError.RowIndex].Cells[anError.ColumnIndex].ErrorText = "an error";
+
+                anError.ThrowException = false;
             }
         }
 
         public MainForm MainForm { get; set; }
         public BindingList<Entry> Entries { get; set; }
+
+        public void CreateGridColumns()
+        {
+            // ID
+            DataGridViewTextBoxColumn idCol = new DataGridViewTextBoxColumn();
+            idCol.Name = "ID";
+            idCol.Visible = false;
+
+            // Date
+            DateColumn dateCol = new DateColumn();
+            dateCol.Name = "Date";
+
+            // Account
+            DataGridViewTextBoxColumn accCol = new DataGridViewTextBoxColumn();
+            accCol.Name = "Account";
+            accCol.Visible = false;
+
+            // Payee
+            DataGridViewComboBoxColumn payCol = new DataGridViewComboBoxColumn();
+            payCol.ValueType = typeof(Payee);
+            payCol.DisplayMember = "Name";
+            payCol.DataSource = GetPayees();
+            payCol.Name = "Payee";
+
+            // Category
+            DataGridViewComboBoxColumn catCol = new DataGridViewComboBoxColumn();
+            //catCol.Items.AddRange(GetPayees());
+            catCol.Name = "Category";
+
+            // Outflow
+            // TODO: Numerical CellTemplate
+            DataGridViewTextBoxColumn outCol = new DataGridViewTextBoxColumn();
+            outCol.Name = "Outflow";
+
+            // Inflow
+            // TODO: Numerical CellTemplate
+            DataGridViewTextBoxColumn inCol = new DataGridViewTextBoxColumn();
+            outCol.Name = "Inflow";
+
+            // IsDone
+            DataGridViewCheckBoxColumn doneCol = new DataGridViewCheckBoxColumn();
+            doneCol.Name = "Done?";
+
+            this.dgEntries.Columns.Add(idCol);
+            this.dgEntries.Columns.Add(dateCol);
+            this.dgEntries.Columns.Add(payCol);
+            this.dgEntries.Columns.Add(catCol);
+            this.dgEntries.Columns.Add(outCol);
+            this.dgEntries.Columns.Add(inCol);
+            this.dgEntries.Columns.Add(doneCol);
+
+            //this.dgEntries.Columns.AddRange(idCol, dateCol, payCol, catCol, outCol, inCol, doneCol);
+        }
 
 
         public void ChangeAccount(string accountName)

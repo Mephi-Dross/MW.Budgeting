@@ -39,6 +39,7 @@ namespace MW.Budgeting.UI.Controls.Grids
         {
             // Format the datestring as a short date
             this.Style.Format = "d";
+            this.Value = DateTime.Now;
         }
 
         public override void InitializeEditingControl(int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle)
@@ -74,7 +75,7 @@ namespace MW.Budgeting.UI.Controls.Grids
             {
                 // Since we can't use a DateTime value in the list, we instead return it as string (again, short date format)
                 if (this.Value == null)
-                    return string.Empty;
+                    return DateTime.Now.ToShortDateString();
 
                 return this.Value.ToShortDateString();
             }
