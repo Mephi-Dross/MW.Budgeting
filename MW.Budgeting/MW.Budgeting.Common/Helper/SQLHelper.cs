@@ -155,9 +155,12 @@ namespace MW.Budgeting.Common.Helper
                 Connection.Close();
             }
 
-            for (int i = 0; i < tableNames.Length; i++)
+            if (ds.Tables.Count > 0)
             {
-                ds.Tables[i].TableName = tableNames[i];
+                for (int i = 0; i < tableNames.Length; i++)
+                {
+                    ds.Tables[i].TableName = tableNames[i];
+                }
             }
 
             return ds;

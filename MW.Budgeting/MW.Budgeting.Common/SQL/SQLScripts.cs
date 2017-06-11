@@ -69,7 +69,7 @@ namespace MW.Budgeting.Common.SQL
 
         #region GET-Scripts
 
-        public const string GET_SELECTED_ACCOUNT =
+        public const string GET_ACCOUNT_FROM_NAME =
             @"SELECT *
               FROM Account
               WHERE Name = '[NAME]'
@@ -79,12 +79,46 @@ namespace MW.Budgeting.Common.SQL
         public const string GET_ENTRIES_FROM_ACCOUNT =
             @"SELECT *
               FROM Entry
-              WHERE Account = [ACCOUNT]";
+              WHERE Account = '[ACCOUNT]'";
 
         public const string GET_ACTIVE_PAYEES =
             @"SELECT *
               FROM Payee
               WHERE IsActive = 'True'";
+
+        public const string GET_CATEGORIES =
+            @"SELECT *
+              FROM Category";
+
+        public const string GET_SELECTED_ACCOUNT =
+            @"SELECT *
+              FROM Account
+              WHERE ID = '[ID]'";
+
+        public const string GET_SELECTED_ENTRY =
+            @"SELECT *
+              FROM Entry
+              WHERE ID = '[ID]'";
+
+        public const string GET_SELECTED_CATEGORY =
+            @"SELECT *
+              FROM Category
+              WHERE ID = '[ID]'";
+
+        public const string GET_SELECTED_PAYEE =
+            @"SELECT *
+              FROM Payee
+              WHERE ID = '[ID]'";
+
+        public const string GET_CHILD_CATEGORIES =
+            @"SELECT *
+              FROM Category
+              WHERE ParentCategory = '[ID]'";
+
+        public const string GET_PAYEE_ENTRIES =
+            @"SELECT *
+              FROM Entry
+              WHERE Payee = '[ID]'";
 
         #endregion
 
@@ -122,9 +156,24 @@ namespace MW.Budgeting.Common.SQL
                     '[IsActive]'
                 )";
 
+        public const string INSERT_CATEGORY =
+            @"INSERT INTO Category (ID, Name, IsMasterCategory, ParentCategory)
+                VALUES (
+                    '[ID]',
+                    '[Name]',
+                    '[IsMasterCategory]',
+                    '[ParentCategory]'
+                )";
+
         #endregion
 
         #region Update-Scripts
+
+        public const string UPDATE_ENTRY =
+            @"UPDATE Entry
+              SET Date = '[DATE]', Outflow = '[OUTFLOW]', Inflow = '[INFLOW]', IsDone = '[ISDONE]', 
+              Account = '[ACCOUNT]', Payee = '[PAYEE]', Category = '[CATEGORY]' 
+              WHERE ID = '[ID]'";
 
         #endregion
     }

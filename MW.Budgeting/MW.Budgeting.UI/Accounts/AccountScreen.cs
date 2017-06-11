@@ -39,66 +39,125 @@ namespace MW.Budgeting.UI.Accounts
         public AccountScreen()
         {
             //CreateAccount("TEST");
-            ChangeAccount("TEST");
             //CreatePayees();
+
+            //Category c1 = new Category();
+            //c1.Name = "Groceries";
+            //c1.IsMasterCategory = true;
+            //c1.Save();
+
+            //Category c2 = new Category();
+            //c2.Name = "Alcohol";
+            //c2.IsMasterCategory = false;
+            //c2.Parent = c1;
+            //c2.Save();
 
 
             InitializeComponent();
             this.Dock = DockStyle.Fill;
             Entries = new BindingList<Entry>();
 
-            this.dgEntries.AutoGenerateColumns = false;
-            this.dgEntries.DataSource = Entries;
-
             // Create the grid columns manually
+            this.dgEntries.AutoGenerateColumns = false;
             CreateGridColumns();
 
+            ChangeAccount("TEST");
+            this.dgEntries.DataSource = Entries;
 
-
-            this.dgEntries.DataError += DgEntries_DataError;
+            this.dgEntries.RowValidating += DgEntries_RowValidating;
+            this.dgEntries.CellEndEdit += DgEntries_CellEndEdit;
         }
 
-        private void DgEntries_DataError(object sender, DataGridViewDataErrorEventArgs anError)
-        {
 
-            MessageBox.Show("Error happened " + anError.Context.ToString());
-
-            if (anError.Context == DataGridViewDataErrorContexts.Commit)
-            {
-                MessageBox.Show("Commit error");
-            }
-            if (anError.Context == DataGridViewDataErrorContexts.CurrentCellChange)
-            {
-                MessageBox.Show("Cell change");
-            }
-            if (anError.Context == DataGridViewDataErrorContexts.Parsing)
-            {
-                MessageBox.Show("parsing error");
-            }
-            if (anError.Context == DataGridViewDataErrorContexts.LeaveControl)
-            {
-                MessageBox.Show("leave control error");
-            }
-
-            if ((anError.Exception) is ConstraintException)
-            {
-                DataGridView view = (DataGridView)sender;
-                view.Rows[anError.RowIndex].ErrorText = "an error";
-                view.Rows[anError.RowIndex].Cells[anError.ColumnIndex].ErrorText = "an error";
-
-                anError.ThrowException = false;
-            }
-        }
 
         public MainForm MainForm { get; set; }
-        public BindingList<Entry> Entries { get; set; }
+        private BindingList<Entry> Entries;
+        private Account currentAccount;
+
+
+        #region Grid-Events
+
+        private void DgEntries_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgEntries[e.ColumnIndex, e.RowIndex] is DataGridViewComboBoxCell)
+            { 
+                DataGridViewComboBoxCell dcc = (DataGridViewComboBoxCell)dgEntries[e.ColumnIndex, e.RowIndex];
+                if (dcc != null && dcc.Value != null)
+                {
+                    foreach (var item in dcc.Items)
+                    {
+                        if (item is Category)
+                        {
+                            Category cat = item as Category;
+                            if (dcc.Value.ToString() == cat.Name)
+                            {
+                                dcc.Tag = cat;
+                                break;
+                            }
+                        }
+
+                        if (item is Payee)
+                        {
+                            Payee pay = item as Payee;
+                            if (dcc.Value.ToString() == pay.Name)
+                            {
+                                dcc.Tag = pay;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DgEntries_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (dgEntries.IsCurrentRowDirty)
+            {
+
+                // Save changes to DB
+                DataGridViewRow row = dgEntries.Rows[e.RowIndex];
+                Entry entry = Entries[e.RowIndex];
+                if (row == null || entry == null)
+                    return;
+
+                entry.Date = DateTime.Parse(((DateCell)row.Cells["Date"]).Value.ToString());
+
+                entry.Inflow = row.Cells["Inflow"].Value == null ? 0 : decimal.Parse( row.Cells["Inflow"].Value.ToString());
+                entry.Outflow = row.Cells["Outflow"].Value == null ? 0 : decimal.Parse(row.Cells["Outflow"].Value.ToString());
+
+                DataGridViewComboBoxCell cbcCat = row.Cells["Category"] as DataGridViewComboBoxCell;
+                if (cbcCat != null && cbcCat.Tag is Category)
+                    entry.Category = cbcCat.Tag as Category;
+
+                DataGridViewComboBoxCell cbcPay = row.Cells["Payee"] as DataGridViewComboBoxCell;
+                if (cbcPay != null && cbcPay.Tag is Payee)
+                    entry.Payee = cbcPay.Tag as Payee;
+
+                DataGridViewCheckBoxCell cbcDone = row.Cells["Done?"] as DataGridViewCheckBoxCell;
+                entry.IsDone = bool.Parse(cbcDone.Value.ToString());
+
+                entry.Account = this.currentAccount;
+
+                try
+                {
+                    //entry.Save();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+        }
+
+        #endregion
 
         public void CreateGridColumns()
         {
             // ID
-            DataGridViewTextBoxColumn idCol = new DataGridViewTextBoxColumn();
-            idCol.Name = "ID";
-            idCol.Visible = false;
+            //DataGridViewTextBoxColumn idCol = new DataGridViewTextBoxColumn();
+            //idCol.Name = "ID";
+            //idCol.Visible = false;
 
             // Date
             DateColumn dateCol = new DateColumn();
@@ -118,7 +177,9 @@ namespace MW.Budgeting.UI.Accounts
 
             // Category
             DataGridViewComboBoxColumn catCol = new DataGridViewComboBoxColumn();
-            //catCol.Items.AddRange(GetPayees());
+            catCol.ValueType = typeof(Category);
+            catCol.DisplayMember = "Name";
+            catCol.DataSource = GetCategories();
             catCol.Name = "Category";
 
             // Outflow
@@ -129,13 +190,13 @@ namespace MW.Budgeting.UI.Accounts
             // Inflow
             // TODO: Numerical CellTemplate
             DataGridViewTextBoxColumn inCol = new DataGridViewTextBoxColumn();
-            outCol.Name = "Inflow";
+            inCol.Name = "Inflow";
 
             // IsDone
             DataGridViewCheckBoxColumn doneCol = new DataGridViewCheckBoxColumn();
             doneCol.Name = "Done?";
 
-            this.dgEntries.Columns.Add(idCol);
+            //this.dgEntries.Columns.Add(idCol);
             this.dgEntries.Columns.Add(dateCol);
             this.dgEntries.Columns.Add(payCol);
             this.dgEntries.Columns.Add(catCol);
@@ -147,9 +208,16 @@ namespace MW.Budgeting.UI.Accounts
         }
 
 
+        #region Temp
+
         public void ChangeAccount(string accountName)
         {
-            Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
+            //Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
+            //this.currentAccount = acc;
+            //foreach (Entry entry in currentAccount.Entries)
+            //{
+            //    Entries.Add(entry);
+            //}
         }
 
         public void CreateAccount(string accountName)
@@ -161,7 +229,7 @@ namespace MW.Budgeting.UI.Accounts
             acc.Note = "Testnote";
             acc.Type = Model.Enums.AccountType.Cash;
 
-            acc.Save();
+            //acc.Save();
         }
 
         private void CreatePayees()
@@ -183,5 +251,15 @@ namespace MW.Budgeting.UI.Accounts
             List<Payee> payees = ConversionHelper.Convert<Payee>(ds).Cast<Payee>().ToList();
             return payees;
         }
+
+        private List<Category> GetCategories()
+        {
+            DataSet ds = SQLHelper.ExecuteDataSet(SQLScripts.GET_CATEGORIES, "Category");
+            List<Category> categories = ConversionHelper.Convert<Category>(ds).Cast<Category>().ToList();
+            return categories;
+        }
+
+
+        #endregion
     }
 }
