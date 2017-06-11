@@ -1,8 +1,12 @@
 ﻿using MW.Budgeting.Common.Helper;
 using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.DBObjects;
+using MW.Budgeting.Model.Helper;
 using MW.Budgeting.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,11 +31,12 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Payee : IDBObject
+    public class Payee : ISaveable, INotifyPropertyChanged, IConnectable
     {
         public Payee()
         {
             ID = Guid.NewGuid();
+            Entries = new List<Entry>();
         }
 
         public Guid ID { get; set; }
@@ -39,26 +44,63 @@ namespace MW.Budgeting.Model.Accounts
         public List<Entry> Entries { get; set; }
         public bool IsActive { get; set; }
 
-        #region IDBObject-Functions
-
-        public void Delete()
+        public void LoadEntries()
         {
+            List<DB_Entry> dbEntries = new List<DB_Entry>();
+            string sql = SQLScripts.GET_PAYEE_ENTRIES.Replace("[ID]", this.ID.ToString());
+            DataSet ds = SQLHelper.ExecuteDataSet(sql, "Entry");
+            dbEntries = ConversionHelper.Convert<DB_Entry>(ds).Cast<DB_Entry>().ToList();
 
+            this.Entries.Clear();
+
+            foreach (DB_Entry ent in dbEntries)
+            {
+                Entry entry = new Entry();
+                entry.ConvertFromDBObject(ent);
+                this.Entries.Add(entry);
+            }
         }
 
-        public void Load(string id)
+        #region ISaveable-Implementation
+
+        public IDBObject ConvertToDBObject()
         {
-            throw new NotImplementedException();
+            DB_Payee dbPay = new DB_Payee();
+
+            dbPay.ID = this.ID.ToString();
+            dbPay.IsActive = this.IsActive;
+            dbPay.Name = this.Name;
+
+            return dbPay;
         }
 
-        public void Save()
+        public void ConvertFromDBObject(IDBObject obj)
         {
-            string sql = SQLScripts.INSERT_PAYEE;
-            sql = sql.Replace("[ID]", this.ID.ToString());
-            sql = sql.Replace("[Name]", this.Name.ToString());
-            sql = sql.Replace("[IsActive]", this.IsActive.ToString());
-            SQLHelper.ExecuteNonQuery(sql);
+            if (!(obj is DB_Payee))
+                return;
+
+            DB_Payee dbPay = obj as DB_Payee;
+            this.ID = Guid.Parse(dbPay.ID);
+            this.IsActive = dbPay.IsActive;
+            this.Name = dbPay.Name;
+
+            DataHelper.AddItem(this);
         }
+
+        #endregion
+
+        #region IConnectable-Implementation
+
+        public void Connect()
+        {
+            this.LoadEntries();
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged-Implementation
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

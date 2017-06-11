@@ -55,7 +55,7 @@ namespace MW.Budgeting.UI.Main
             //this.MainSplitter.Panel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             // Initializing
-            this.AccountScreen = new AccountScreen();
+            this.AccountScreen = new AccountScreen("TEST");
             this.BudgetScreen = new BudgetScreen();
             this.NavBar = new NavBar();
 

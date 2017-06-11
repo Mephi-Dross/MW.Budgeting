@@ -1,6 +1,12 @@
-﻿using MW.Budgeting.Model.Interfaces;
+﻿using MW.Budgeting.Common.Helper;
+using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.DBObjects;
+using MW.Budgeting.Model.Helper;
+using MW.Budgeting.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,35 +31,98 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Category : IDBObject
+    public class Category : ISaveable, INotifyPropertyChanged, IConnectable
     {
         public Category()
         {
             ID = Guid.NewGuid();
+            Childs = new List<Category>();
         }
 
         public Guid ID { get; set; }
         public string Name { get; set; }
         public bool IsMasterCategory { get; set; }
-        public Category Parent { get; set; }
+        public Category ParentCategory { get; set; }
+
         public List<Category> Childs { get; set; }
 
-        #region IDBObject-Functions
 
-        public void Delete()
+        public void LoadChildCategories()
         {
-            throw new NotImplementedException();
+            List<DB_Category> dbCats = new List<DB_Category>();
+            string sql = SQLScripts.GET_CHILD_CATEGORIES.Replace("[ID]", this.ID.ToString());
+            DataSet ds = SQLHelper.ExecuteDataSet(sql, "Category");
+            dbCats = ConversionHelper.Convert<DB_Category>(ds).Cast<DB_Category>().ToList();
+
+            this.Childs.Clear();
+
+            foreach (DB_Category dbCat in dbCats)
+            {
+                Category cat = new Category();
+                cat.ConvertFromDBObject(dbCat);
+                this.Childs.Add(cat);
+            }
         }
 
-        public void Load(string id)
+        #region ISaveable-Implementation
+
+        public IDBObject ConvertToDBObject()
         {
-            throw new NotImplementedException();
+            DB_Category dbCat = new DB_Category();
+
+            dbCat.ID = this.ID.ToString();
+            dbCat.IsMasterCategory = this.IsMasterCategory;
+            dbCat.Name = this.Name;
+            dbCat.ParentCategory = this.ParentCategory == null ? string.Empty : this.ParentCategory.ID.ToString();
+
+            return dbCat;
         }
 
-        public void Save()
+        public void ConvertFromDBObject(IDBObject obj)
         {
-            throw new NotImplementedException();
+            if (!(obj is DB_Category))
+                return;
+
+            DB_Category dbCat = obj as DB_Category;
+            this.ID = Guid.Parse(dbCat.ID);
+            this.IsMasterCategory = dbCat.IsMasterCategory;
+            this.Name = dbCat.Name;
+
+            DataHelper.AddItem(this);
+
+            if (!string.IsNullOrEmpty(dbCat.ParentCategory))
+            {
+                DB_Category parentDBCat = new DB_Category();
+                parentDBCat.Load(dbCat.ParentCategory);
+                ISaveable saveable = DataHelper.LoadedObjects.FirstOrDefault(lo => lo.ID.ToString() == parentDBCat.ID);
+                if (saveable != null)
+                {
+                    Category parentCat = DataHelper.LoadedObjects.Where(lo => lo is Category).Cast<Category>().FirstOrDefault(lo => lo.ID.ToString() == parentDBCat.ID);
+                    this.ParentCategory = parentCat;
+                }
+                else
+                {
+                    Category parentCat = new Category();
+                    parentCat.ConvertFromDBObject(parentDBCat);
+                    this.ParentCategory = parentCat;
+                }
+            }
         }
+
+        #endregion
+
+        #region IConnectable-Implementation
+
+        public void Connect()
+        {
+            this.LoadChildCategories();
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged-Implementation
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
     }

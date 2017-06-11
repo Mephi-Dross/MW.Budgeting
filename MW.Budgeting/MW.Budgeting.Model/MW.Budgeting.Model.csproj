@@ -62,10 +62,17 @@
     <Compile Include="Accounts\Category.cs" />
     <Compile Include="Accounts\Entry.cs" />
     <Compile Include="Accounts\Payee.cs" />
+    <Compile Include="DBObjects\DB_Account.cs" />
+    <Compile Include="DBObjects\DB_Category.cs" />
+    <Compile Include="DBObjects\DB_Entry.cs" />
+    <Compile Include="DBObjects\DB_Payee.cs" />
     <Compile Include="Enums\AccountType.cs" />
     <Compile Include="Enums\NavItems.cs" />
     <Compile Include="Helper\ConversionHelper.cs" />
+    <Compile Include="Helper\DataHelper.cs" />
+    <Compile Include="Interfaces\IConnectable.cs" />
     <Compile Include="Interfaces\IDBObject.cs" />
+    <Compile Include="Interfaces\ISaveable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

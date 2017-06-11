@@ -1,10 +1,12 @@
 ﻿using MW.Budgeting.Common.Helper;
 using MW.Budgeting.Common.SQL;
+using MW.Budgeting.Model.DBObjects;
 using MW.Budgeting.Model.Enums;
 using MW.Budgeting.Model.Helper;
 using MW.Budgeting.Model.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -30,16 +32,24 @@ using System.Threading.Tasks;
 
 namespace MW.Budgeting.Model.Accounts
 {
-    public class Account : IDBObject
+    public class Account : ISaveable, INotifyPropertyChanged, IConnectable
     {
         public Account()
         {
             ID = Guid.NewGuid();
+            Entries = new List<Entry>();
         }
 
         public Account(string name)
         {
-            Load(name);
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            Entries = new List<Entry>();
+
+            DB_Account dbAcc = new DB_Account();
+            dbAcc.LoadFromName(name);
+            this.ConvertFromDBObject(dbAcc);
         }
 
         public Guid ID { get; set; }
@@ -52,47 +62,68 @@ namespace MW.Budgeting.Model.Accounts
 
         public void LoadEntries()
         {
+            List<DB_Entry> dbEntries = new List<DB_Entry>();
+            string sql = SQLScripts.GET_ENTRIES_FROM_ACCOUNT.Replace("[ACCOUNT]", this.ID.ToString());
+            DataSet ds = SQLHelper.ExecuteDataSet(sql, "Entry");
+            dbEntries = ConversionHelper.Convert<DB_Entry>(ds).Cast<DB_Entry>().ToList();
 
-        }
+            Entries.Clear();
 
-        #region IDBObject-Functions
-
-        public void Save()
-        {
-            string sql = SQLScripts.INSERT_ACCOUNT;
-            sql = sql.Replace("[ID]", this.ID.ToString());
-            sql = sql.Replace("[NAME]", this.Name);
-            sql = sql.Replace("[NOTE]", this.Note);
-            sql = sql.Replace("[ISOFFBUDGET]", this.IsOffBudget.ToString());
-            sql = sql.Replace("[ISACTIVE]", this.IsActive.ToString());
-            sql = sql.Replace("[TYPE]", this.Type.ToString());
-            SQLHelper.ExecuteNonQuery(sql);
-        }
-
-        public void Load(string name)
-        {
-            string sql = SQLScripts.GET_SELECTED_ACCOUNT;
-            sql = sql.Replace("[NAME]", name);
-            DataSet ds = SQLHelper.ExecuteDataSet(sql, "Account");
-            Account acc = ConversionHelper.Convert<Account>(ds).Cast<Account>().FirstOrDefault();
-            
-            if (acc != null)
+            foreach (DB_Entry ent in dbEntries)
             {
-                this.ID = acc.ID;
-                this.Name = acc.Name;
-                this.Note = acc.Note;
-                this.IsOffBudget = acc.IsOffBudget;
-                this.IsActive = acc.IsActive;
-                this.Type = acc.Type;
-                this.LoadEntries();
+                Entry entry = new Entry();
+                entry.ConvertFromDBObject(ent);
+                Entries.Add(entry);
             }
         }
 
-        public void Delete()
+        #region ISaveable-Functions
+
+        public IDBObject ConvertToDBObject()
         {
-            throw new NotImplementedException();
+            DB_Account acc = new DB_Account();
+            acc.ID = this.ID.ToString();
+            acc.IsActive = this.IsActive;
+            acc.IsOffBudget = this.IsOffBudget;
+            acc.Name = this.Name;
+            acc.Note = this.Note;
+            acc.Type = this.Type.ToString();
+            return acc;
+        }
+
+        public void ConvertFromDBObject(IDBObject obj)
+        {
+            if (!(obj is DB_Account))
+                return;
+
+            DB_Account acc = obj as DB_Account;
+            this.ID = Guid.Parse(acc.ID);
+            this.IsActive = acc.IsActive;
+            this.IsOffBudget = acc.IsOffBudget;
+            this.Name = acc.Name;
+            this.Note = acc.Note;
+            Enums.AccountType type = Enums.AccountType.None;
+            Enum.TryParse<Enums.AccountType>(acc.Type, out type);
+            this.Type = type;
+
+            DataHelper.AddItem(this);
         }
 
         #endregion
-    } 
+
+        #region IConnectable-Implementation
+
+        public void Connect()
+        {
+            this.LoadEntries();
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged-Implementation
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+    }
 }

@@ -36,7 +36,7 @@ namespace MW.Budgeting.UI.Accounts
 {
     public partial class AccountScreen : UserControl
     {
-        public AccountScreen()
+        public AccountScreen(string accName)
         {
             //CreateAccount("TEST");
             //CreatePayees();
@@ -52,7 +52,6 @@ namespace MW.Budgeting.UI.Accounts
             //c2.Parent = c1;
             //c2.Save();
 
-
             InitializeComponent();
             this.Dock = DockStyle.Fill;
             Entries = new BindingList<Entry>();
@@ -61,11 +60,11 @@ namespace MW.Budgeting.UI.Accounts
             this.dgEntries.AutoGenerateColumns = false;
             CreateGridColumns();
 
-            ChangeAccount("TEST");
             this.dgEntries.DataSource = Entries;
-
             this.dgEntries.RowValidating += DgEntries_RowValidating;
             this.dgEntries.CellEndEdit += DgEntries_CellEndEdit;
+
+            LoadData(accName);
         }
 
 
@@ -114,7 +113,6 @@ namespace MW.Budgeting.UI.Accounts
         {
             if (dgEntries.IsCurrentRowDirty)
             {
-
                 // Save changes to DB
                 DataGridViewRow row = dgEntries.Rows[e.RowIndex];
                 Entry entry = Entries[e.RowIndex];
@@ -135,13 +133,16 @@ namespace MW.Budgeting.UI.Accounts
                     entry.Payee = cbcPay.Tag as Payee;
 
                 DataGridViewCheckBoxCell cbcDone = row.Cells["Done?"] as DataGridViewCheckBoxCell;
-                entry.IsDone = bool.Parse(cbcDone.Value.ToString());
+                if (cbcDone.Value != null)
+                    entry.IsDone = bool.Parse(cbcDone.Value.ToString());
+                else
+                    entry.IsDone = false;
 
                 entry.Account = this.currentAccount;
 
                 try
                 {
-                    //entry.Save();
+                    entry.ConvertToDBObject().Save();
                 }
                 catch (Exception ex)
                 {
@@ -207,17 +208,38 @@ namespace MW.Budgeting.UI.Accounts
             //this.dgEntries.Columns.AddRange(idCol, dateCol, payCol, catCol, outCol, inCol, doneCol);
         }
 
+        public void LoadData(string accName)
+        {
+            Model.Accounts.Account acc = new Model.Accounts.Account(accName);
+            DataHelper.ConnectData();
+            this.currentAccount = acc;
+
+            foreach (Entry entry in currentAccount.Entries)
+            {
+                Entries.Add(entry);
+            }
+
+            RefreshData();
+        }
+
+        public void RefreshData()
+        {
+            this.dgEntries.DataSource = Entries;
+        }
+
 
         #region Temp
 
         public void ChangeAccount(string accountName)
         {
-            //Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
-            //this.currentAccount = acc;
-            //foreach (Entry entry in currentAccount.Entries)
-            //{
-            //    Entries.Add(entry);
-            //}
+            Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
+            this.currentAccount = acc;
+
+            foreach (Entry entry in currentAccount.Entries)
+            {
+                Entries.Add(entry);
+            }
+
         }
 
         public void CreateAccount(string accountName)
@@ -239,10 +261,10 @@ namespace MW.Budgeting.UI.Accounts
             Payee p3 = new Payee() { IsActive = true, Name = "P3" };
             Payee p4 = new Payee() { IsActive = true, Name = "P4" };
 
-            p1.Save();
-            p2.Save();
-            p3.Save();
-            p4.Save();
+            //p1.Save();
+            //p2.Save();
+            //p3.Save();
+            //p4.Save();
         }
 
         private List<Payee> GetPayees()
