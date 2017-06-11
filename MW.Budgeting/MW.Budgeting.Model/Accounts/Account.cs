@@ -40,18 +40,6 @@ namespace MW.Budgeting.Model.Accounts
             Entries = new List<Entry>();
         }
 
-        public Account(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-                return;
-
-            Entries = new List<Entry>();
-
-            DB_Account dbAcc = new DB_Account();
-            dbAcc.LoadFromName(name);
-            this.ConvertFromDBObject(dbAcc);
-        }
-
         public Guid ID { get; set; }
         public string Name { get; set; }
         public string Note { get; set; }
@@ -75,6 +63,27 @@ namespace MW.Budgeting.Model.Accounts
                 entry.ConvertFromDBObject(ent);
                 Entries.Add(entry);
             }
+        }
+
+        public static Account LoadFromName(string name)
+        {
+            DB_Account dbAcc = new DB_Account();
+            dbAcc.LoadFromName(name);
+
+            if(dbAcc.ID == string.Empty)
+            {
+                // Doesn't exist
+                return null;
+            }
+            else
+            {
+                Account acc = new Account();
+                acc.ConvertFromDBObject(dbAcc);
+                DataHelper.AddItem(acc);
+                DataHelper.ConnectData();
+                return acc;
+            }
+
         }
 
         #region ISaveable-Functions

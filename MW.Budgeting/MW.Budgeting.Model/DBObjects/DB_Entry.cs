@@ -64,28 +64,28 @@ namespace MW.Budgeting.Model.DBObjects
             {
                 // Insert
                 sql = SQLScripts.INSERT_ENTRY;
-                sql.Replace("[ID]", this.ID);
-                sql.Replace("[DATE]", this.Date);
-                sql.Replace("[ACCOUNT]", this.Account);
-                sql.Replace("[PAYEE]", this.Payee);
-                sql.Replace("[CATEGORY]", this.Category);
-                sql.Replace("[OUTFLOW]", this.Outflow.ToString());
-                sql.Replace("[INFLOW]", this.Inflow.ToString());
-                sql.Replace("[ISDONE]", this.IsDone.ToString());
+                sql = sql.Replace("[ID]", this.ID);
+                sql = sql.Replace("[DATE]", this.Date);
+                sql = sql.Replace("[ACCOUNT]", this.Account);
+                sql = sql.Replace("[PAYEE]", this.Payee);
+                sql = sql.Replace("[CATEGORY]", this.Category);
+                sql = sql.Replace("[OUTFLOW]", this.Outflow.ToString());
+                sql = sql.Replace("[INFLOW]", this.Inflow.ToString());
+                sql = sql.Replace("[ISDONE]", this.IsDone.ToString());
                 SQLHelper.ExecuteNonQuery(sql);
             }
             else
             {
                 // Update
                 sql = SQLScripts.UPDATE_ENTRY;
-                sql.Replace("[ID]", this.ID);
-                sql.Replace("[DATE]", this.Date);
-                sql.Replace("[ACCOUNT]", this.Account);
-                sql.Replace("[PAYEE]", this.Payee);
-                sql.Replace("[CATEGORY]", this.Category);
-                sql.Replace("[OUTFLOW]", this.Outflow.ToString());
-                sql.Replace("[INFLOW]", this.Inflow.ToString());
-                sql.Replace("[ISDONE]", this.IsDone.ToString());
+                sql = sql.Replace("[ID]", this.ID);
+                sql = sql.Replace("[DATE]", this.Date);
+                sql = sql.Replace("[ACCOUNT]", this.Account);
+                sql = sql.Replace("[PAYEE]", this.Payee);
+                sql = sql.Replace("[CATEGORY]", this.Category);
+                sql = sql.Replace("[OUTFLOW]", this.Outflow.ToString());
+                sql = sql.Replace("[INFLOW]", this.Inflow.ToString());
+                sql = sql.Replace("[ISDONE]", this.IsDone.ToString());
                 SQLHelper.ExecuteNonQuery(sql);
             }
 

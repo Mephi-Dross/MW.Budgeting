@@ -173,14 +173,14 @@ namespace MW.Budgeting.UI.Accounts
             DataGridViewComboBoxColumn payCol = new DataGridViewComboBoxColumn();
             payCol.ValueType = typeof(Payee);
             payCol.DisplayMember = "Name";
-            payCol.DataSource = GetPayees();
+            payCol.DataSource = DataHelper.GetPayees();
             payCol.Name = "Payee";
 
             // Category
             DataGridViewComboBoxColumn catCol = new DataGridViewComboBoxColumn();
             catCol.ValueType = typeof(Category);
             catCol.DisplayMember = "Name";
-            catCol.DataSource = GetCategories();
+            catCol.DataSource = DataHelper.GetCategories();
             catCol.Name = "Category";
 
             // Outflow
@@ -210,8 +210,20 @@ namespace MW.Budgeting.UI.Accounts
 
         public void LoadData(string accName)
         {
-            Model.Accounts.Account acc = new Model.Accounts.Account(accName);
-            DataHelper.ConnectData();
+            List<Account> accounts = DataHelper.LoadedObjects.Where(lo => lo is Account).Cast<Account>().ToList();
+            Account acc = accounts.FirstOrDefault(a => a.Name == accName);
+            if (acc == null)
+            {
+                // Try to load from DB
+                acc = Account.LoadFromName(accName);
+                if (acc == null)
+                {
+                    // No account with that name
+                    return;
+                }
+            }
+
+            // Account found
             this.currentAccount = acc;
 
             foreach (Entry entry in currentAccount.Entries)
@@ -232,13 +244,13 @@ namespace MW.Budgeting.UI.Accounts
 
         public void ChangeAccount(string accountName)
         {
-            Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
-            this.currentAccount = acc;
+            //Model.Accounts.Account acc = new Model.Accounts.Account(accountName);
+            //this.currentAccount = acc;
 
-            foreach (Entry entry in currentAccount.Entries)
-            {
-                Entries.Add(entry);
-            }
+            //foreach (Entry entry in currentAccount.Entries)
+            //{
+            //    Entries.Add(entry);
+            //}
 
         }
 
@@ -266,21 +278,6 @@ namespace MW.Budgeting.UI.Accounts
             //p3.Save();
             //p4.Save();
         }
-
-        private List<Payee> GetPayees()
-        {
-            DataSet ds = SQLHelper.ExecuteDataSet(SQLScripts.GET_ACTIVE_PAYEES, "Payee");
-            List<Payee> payees = ConversionHelper.Convert<Payee>(ds).Cast<Payee>().ToList();
-            return payees;
-        }
-
-        private List<Category> GetCategories()
-        {
-            DataSet ds = SQLHelper.ExecuteDataSet(SQLScripts.GET_CATEGORIES, "Category");
-            List<Category> categories = ConversionHelper.Convert<Category>(ds).Cast<Category>().ToList();
-            return categories;
-        }
-
 
         #endregion
     }
