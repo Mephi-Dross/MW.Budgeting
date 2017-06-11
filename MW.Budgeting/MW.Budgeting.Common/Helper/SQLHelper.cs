@@ -106,6 +106,28 @@ namespace MW.Budgeting.Common.Helper
             return value;
         }
 
+        public static object ExecuteScalar(string sql)
+        {
+            SQLiteCommand cmd = new SQLiteCommand(sql, Connection);
+            object obj = null;
+            try
+            {
+                Connection.Open();
+                obj = cmd.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                //TODO: Add logging
+                System.Diagnostics.Debug.Write(ex.Message);
+            }
+            finally
+            {
+                Connection.Close();
+            }
+
+            return obj;
+        }
+
         public static List<NameValueCollection> ExecuteReader(string sql)
         {
             SQLiteDataReader reader;
